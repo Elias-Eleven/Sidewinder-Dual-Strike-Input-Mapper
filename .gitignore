@@ -1,0 +1,39 @@
+# Build output
+bin/
+obj/
+publish/
+*.app/
+
+# .NET / NuGet
+*.nupkg
+*.snupkg
+.nuget/
+project.lock.json
+TestResults/
+*.binlog
+
+# Editors and IDEs
+.vs/
+.idea/
+*.user
+*.suo
+*.userprefs
+*.sln.docstates
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+# App settings written while testing (the app saves settings.json next to the exe,
+# which is inside bin/ or publish/ and already ignored; these catch stray copies).
+settings.json.tmp
+settings.json.broken
+
+# Claude Code personal settings
+.claude/settings.local.json
+
+# OS clutter
+.DS_Store
+Thumbs.db
+Desktop.ini
+*~

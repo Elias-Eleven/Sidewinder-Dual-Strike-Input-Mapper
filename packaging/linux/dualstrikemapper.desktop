@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=SideWinder Dual Strike Input Mapper
+Comment=Use a SideWinder Dual Strike as a mouse and map its buttons
+Exec=DualStrikeMapper
+Icon=dualstrikemapper
+Terminal=false
+Categories=Utility;Game;
+StartupWMClass=DualStrikeMapper

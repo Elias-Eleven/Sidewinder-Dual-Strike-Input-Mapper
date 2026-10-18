@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DualStrikeMapper.App/DualStrikeMapper.App.csproj" />
+    <Project Path="src/DualStrikeMapper.Core/DualStrikeMapper.Core.csproj" />
+    <Project Path="src/DualStrikeMapper.Probe/DualStrikeMapper.Probe.csproj" />
+  </Folder>
+</Solution>
