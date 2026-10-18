@@ -1,11 +1,15 @@
 #!/bin/sh
 # Installs SideWinder Dual Strike Input Mapper for the current user, with its icon and an app-menu entry.
-# Usage (after `dotnet publish ... -r linux-x64 -o publish/linux-x64`):
+# From the release download: extract it, then run  sh install.sh
+# From the source (after `dotnet publish ... -r linux-x64 -o publish/linux-x64`):
 #   sh packaging/linux/install.sh publish/linux-x64/DualStrikeMapper
 set -e
 
 here=$(cd "$(dirname "$0")" && pwd)
-binary=${1:-"$here/../../publish/linux-x64/DualStrikeMapper"}
+# The release download has the program right next to this script.
+default="$here/DualStrikeMapper"
+[ -f "$default" ] || default="$here/../../publish/linux-x64/DualStrikeMapper"
+binary=${1:-"$default"}
 [ -f "$binary" ] || { echo "Build it first: dotnet publish src/DualStrikeMapper.App -c Release -r linux-x64 -o publish/linux-x64"; exit 1; }
 
 # The app keeps settings.json next to itself, so give it its own writable folder.

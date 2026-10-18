@@ -38,6 +38,19 @@ dotnet publish src/DualStrikeMapper.App -c Release -r osx-arm64 -o publish/osx-a
 Use `osx-x64` for Intel Macs. The result is `publish/<platform>/DualStrikeMapper(.exe)`.
 `settings.json` is saved next to it, so the folder can live anywhere (keep it somewhere you can write to).
 
+### Make the release downloads
+
+Builds all three and packages them for a GitHub release into `publish/release` (needs PowerShell 7):
+
+```bash
+pwsh tools/make-release.ps1 -Version 1.0.0
+```
+
+You get `DualStrikeMapper-windows-x64.zip`, `…-linux-x64.tar.gz` (program + `install.sh`)
+and `…-macos-arm64.zip` (`DualStrikeMapper.app`). Each unpacks into a `DualStrikeMapper` folder;
+on Windows and Linux `settings.json` is saved in that folder, on macOS in
+`~/Library/Application Support/DualStrikeMapper`. Attach the three files to the release.
+
 ### Add it to the app menu (Linux) or make a .app (macOS)
 
 The Windows `.exe` already carries the icon. On the other two, one extra step adds the icon and launcher:

@@ -95,14 +95,20 @@ public static class SettingsStore
 
     private static string ResolvePath()
     {
-        var portable = Path.Combine(AppContext.BaseDirectory, "settings.json");
-        if (CanWrite(AppContext.BaseDirectory))
-            return portable;
+        // Inside a macOS .app bundle a new file would break the app's signature, so never write there.
+        var inAppBundle = AppContext.BaseDirectory.Replace('\\', '/').Contains(".app/Contents/", StringComparison.Ordinal);
+        if (!inAppBundle && CanWrite(AppContext.BaseDirectory))
+            return Path.Combine(AppContext.BaseDirectory, "settings.json");
 
-        var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DualStrikeMapper");
+        var dir = Path.Combine(UserConfigFolder(), "DualStrikeMapper");
         Directory.CreateDirectory(dir);
         return Path.Combine(dir, "settings.json");
     }
+
+    /// <summary>AppData on Windows, ~/Library/Application Support on macOS, ~/.config on Linux.</summary>
+    private static string UserConfigFolder() => OperatingSystem.IsMacOS()
+        ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library", "Application Support")
+        : Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
     private static bool CanWrite(string dir)
     {
