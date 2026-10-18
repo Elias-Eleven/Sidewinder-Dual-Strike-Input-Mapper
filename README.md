@@ -1,6 +1,7 @@
 # SideWinder Dual Strike Input Mapper
 
-Use a Microsoft SideWinder Dual Strike (1999) as a mouse, and map every button to clicks, keys or scrolling.
+Modern compatibility software and mapper for the Microsoft Sidewinder Dual Strike Gamepad
+
 Runs on Windows, Linux and macOS.
 
 - **Handle → mouse.** Inside the aim zone the cursor follows the handle; push past it and the cursor keeps moving.
