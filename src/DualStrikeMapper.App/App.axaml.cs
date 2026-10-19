@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using DualStrikeMapper.App.ViewModels;
 using DualStrikeMapper.App.Views;
 using DualStrikeMapper.Core;
@@ -46,6 +47,7 @@ public partial class App : Application
                 _window.Show();
 
             _engine.Start();
+            Program.Instance?.Listen(() => Dispatcher.UIThread.Post(ShowWindow));
             desktop.Exit += (_, _) =>
             {
                 _viewModel.SaveNow();

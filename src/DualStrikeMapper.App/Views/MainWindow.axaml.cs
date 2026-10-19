@@ -40,6 +40,9 @@ public partial class MainWindow : Window
     /// <summary>Close the ⋯ menu once an option is picked (the command runs through its binding).</summary>
     private void OnOptionsItemClick(object? sender, RoutedEventArgs e) => OptionsButton.Flyout?.Hide();
 
+    /// <summary>Closing the menu mid-question counts as cancel; it reopens on the options page.</summary>
+    private void OnOptionsMenuClosed(object? sender, EventArgs e) => _vm?.CancelDeleteCommand.Execute(null);
+
     /// <summary>Moving from the name to the description keeps editing; leaving both saves.</summary>
     private void CommitIfFocusLeftEditor()
     {

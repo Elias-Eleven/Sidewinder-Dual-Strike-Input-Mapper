@@ -1,5 +1,5 @@
-# Makes the app icons from Logo.tiff: Windows .ico, macOS .icns, Linux PNGs. Uses a thin light
-# outline so the dark logo shows on dark taskbars. Run from anywhere:
+# Makes the app icons from Logo.tiff: Windows .ico, macOS .icns, Linux PNGs. The light outline
+# that keeps the dark logo visible on dark taskbars is part of Logo.tiff. Run from anywhere:
 #   powershell -ExecutionPolicy Bypass -File tools/make-icons.ps1
 param(
     [string]$SrcPath = (Join-Path $PSScriptRoot '..\Logo.tiff'),
@@ -16,28 +16,11 @@ function Render([int]$size) {
   $g = [System.Drawing.Graphics]::FromImage($bmp)
   $g.InterpolationMode = 'HighQualityBicubic'; $g.SmoothingMode = 'HighQuality'; $g.PixelOffsetMode = 'HighQuality'
   $g.Clear([System.Drawing.Color]::Transparent)
-  # Thin light outline so the dark logo shows on dark taskbars: at least 1px, ~2% of the icon.
-  $outline = [Math]::Max(1.0, $size / 48.0)
-  # Fit the logo (a bit wider than tall) into the square, keep its shape, leave room for the outline.
-  $margin = [Math]::Floor($size / 32) + $outline
+  # Fit the logo (a bit wider than tall) into the square and keep its shape.
+  $margin = [Math]::Floor($size / 32)
   $scale = [Math]::Min(($size - 2 * $margin) / $logo.Width, ($size - 2 * $margin) / $logo.Height)
   $w = $logo.Width * $scale; $h = $logo.Height * $scale
   $x = ($size - $w) / 2; $y = ($size - $h) / 2
-
-  # Outline: the logo's silhouette in light grey, stamped in a ring around the logo. Then the logo on top.
-  $matrix = New-Object System.Drawing.Imaging.ColorMatrix
-  $matrix.Matrix00 = 0; $matrix.Matrix11 = 0; $matrix.Matrix22 = 0
-  $matrix.Matrix40 = 0.94; $matrix.Matrix41 = 0.94; $matrix.Matrix42 = 0.94
-  $attrs = New-Object System.Drawing.Imaging.ImageAttributes; $attrs.SetColorMatrix($matrix)
-  foreach ($ring in @($outline, ($outline / 2))) {
-    for ($a = 0; $a -lt 360; $a += 22.5) {
-      $rad = $a * [Math]::PI / 180
-      $dx = [single]($x + [Math]::Cos($rad) * $ring); $dy = [single]($y + [Math]::Sin($rad) * $ring)
-      $dest = New-Object System.Drawing.RectangleF $dx, $dy, ([single]$w), ([single]$h)
-      $pts = [System.Drawing.PointF[]]@((New-Object System.Drawing.PointF $dest.Left, $dest.Top), (New-Object System.Drawing.PointF $dest.Right, $dest.Top), (New-Object System.Drawing.PointF $dest.Left, $dest.Bottom))
-      $g.DrawImage($logo, $pts, (New-Object System.Drawing.RectangleF 0, 0, $logo.Width, $logo.Height), [System.Drawing.GraphicsUnit]::Pixel, $attrs)
-    }
-  }
   $g.DrawImage($logo, [single]$x, [single]$y, [single]$w, [single]$h)
   $g.Dispose()
   $ms = New-Object System.IO.MemoryStream

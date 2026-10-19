@@ -48,14 +48,6 @@
                             <Button Grid.Column="1" Classes="flat" Content="Dismiss" Command="{Binding DismissErrorCommand}" />
                         </Grid>
                     </Border>
-                    <Border IsVisible="{Binding IsConfirmingDelete}" Background="#33E25C4C" CornerRadius="6" Padding="12,6">
-                        <Grid ColumnDefinitions="*,Auto,Auto">
-                            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding DeleteConfirmText}" />
-                            <Button Grid.Column="1" Classes="flat" Content="Delete" FontWeight="SemiBold" Foreground="#FF8A7A"
-                                    Command="{Binding DeleteProfileCommand}" />
-                            <Button Grid.Column="2" Classes="flat" Content="Cancel" Command="{Binding CancelDeleteCommand}" />
-                        </Grid>
-                    </Border>
                 </StackPanel>
 
                 <!-- Controller with callouts -->
@@ -116,18 +108,32 @@
                                  and briefly jumped. Fixed width/rows can't resize or move. -->
                             <Button x:Name="OptionsButton" Classes="chip" Width="34" Height="30" CornerRadius="5" Content="⋯" FontSize="15">
                                 <Button.Flyout>
-                                    <Flyout Placement="TopEdgeAlignedRight" FlyoutPresenterClasses="menu">
-                                        <StackPanel Width="250">
-                                            <Button Classes="menuItem" Content="Edit name and description"
-                                                    Command="{Binding StartRenameCommand}" Click="OnOptionsItemClick" />
-                                            <Button Classes="menuItem" Content="Duplicate"
-                                                    Command="{Binding DuplicateProfileCommand}" Click="OnOptionsItemClick" />
-                                            <Button Classes="menuItem" Content="Reset buttons to default"
-                                                    Command="{Binding ResetProfileCommand}" Click="OnOptionsItemClick" />
-                                            <Border Height="1" Background="#4A4C4E" Margin="8,4" />
-                                            <Button Classes="menuItem" Content="Delete layout…"
-                                                    Command="{Binding AskDeleteProfileCommand}" Click="OnOptionsItemClick" />
-                                        </StackPanel>
+                                    <!-- The delete question opens inside the menu, where the user clicked.
+                                         Both pages are 145 px tall, so the menu never resizes. -->
+                                    <Flyout Placement="TopEdgeAlignedRight" FlyoutPresenterClasses="menu" Closed="OnOptionsMenuClosed">
+                                        <Grid Width="250">
+                                            <StackPanel IsVisible="{Binding !IsConfirmingDelete}">
+                                                <Button Classes="menuItem" Content="Edit name and description"
+                                                        Command="{Binding StartRenameCommand}" Click="OnOptionsItemClick" />
+                                                <Button Classes="menuItem" Content="Duplicate"
+                                                        Command="{Binding DuplicateProfileCommand}" Click="OnOptionsItemClick" />
+                                                <Button Classes="menuItem" Content="Reset buttons to default"
+                                                        Command="{Binding ResetProfileCommand}" Click="OnOptionsItemClick" />
+                                                <Border Height="1" Background="#4A4C4E" Margin="8,4" />
+                                                <Button Classes="menuItem" Content="Delete layout…"
+                                                        Command="{Binding AskDeleteProfileCommand}" />
+                                            </StackPanel>
+                                            <Grid IsVisible="{Binding IsConfirmingDelete}" Height="145" RowDefinitions="*,Auto">
+                                                <TextBlock Margin="12,10" TextWrapping="Wrap" Text="{Binding DeleteConfirmText}" />
+                                                <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="4">
+                                                    <Button Classes="menuItem" HorizontalContentAlignment="Center" Content="Delete"
+                                                            FontWeight="SemiBold" Foreground="#FF8A7A"
+                                                            Command="{Binding DeleteProfileCommand}" Click="OnOptionsItemClick" />
+                                                    <Button Grid.Column="1" Classes="menuItem" HorizontalContentAlignment="Center" Content="Cancel"
+                                                            Command="{Binding CancelDeleteCommand}" />
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
                                     </Flyout>
                                 </Button.Flyout>
                             </Button>

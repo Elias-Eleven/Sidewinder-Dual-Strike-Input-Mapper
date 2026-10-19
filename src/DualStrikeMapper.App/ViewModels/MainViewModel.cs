@@ -274,7 +274,7 @@ public partial class MainViewModel : ViewModelBase
         QueueSave();
     }
 
-    /// <summary>Delete asks first; the banner calls <see cref="DeleteProfile"/>.</summary>
+    /// <summary>Shows the delete confirmation; choosing Delete calls <see cref="DeleteProfile"/>.</summary>
     [RelayCommand(CanExecute = nameof(CanDeleteProfile))]
     private void AskDeleteProfile() => IsConfirmingDelete = true;
 
