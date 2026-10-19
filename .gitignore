@@ -2,7 +2,6 @@
 bin/
 obj/
 publish/
-*.app/
 
 # .NET / NuGet
 *.nupkg

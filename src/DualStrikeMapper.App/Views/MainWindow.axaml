@@ -1,0 +1,319 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:DualStrikeMapper.App.ViewModels"
+        xmlns:views="using:DualStrikeMapper.App.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1120" d:DesignHeight="720"
+        x:Class="DualStrikeMapper.App.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Icon="/Assets/app.ico"
+        Title="SideWinder Dual Strike Input Mapper"
+        Width="1120" Height="720" MinWidth="820" MinHeight="560"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource WindowBrush}">
+
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <Grid>
+        <!-- Main panel -->
+        <Border Margin="22" Background="{StaticResource PanelBrush}" CornerRadius="6"
+                BorderBrush="{StaticResource PanelEdgeBrush}" BorderThickness="1">
+            <Grid RowDefinitions="Auto,*,Auto" Margin="28,22,28,16">
+
+                <!-- Header -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Classes="title" Text="Controller Setup" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="9" VerticalAlignment="Center">
+                        <Ellipse Width="10" Height="10" Fill="{StaticResource MutedBrush}" IsVisible="{Binding !Connected}" />
+                        <Ellipse Width="10" Height="10" Fill="{StaticResource AccentBrush}" IsVisible="{Binding Connected}" />
+                        <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" FontSize="13" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Warnings float over the empty space above the controller, so nothing moves when they appear -->
+                <StackPanel Grid.Row="1" Spacing="6" Margin="0,12,0,0" VerticalAlignment="Top" ZIndex="1">
+                    <Border IsVisible="{Binding HasConflict}" Background="#33E2B44C" CornerRadius="6" Padding="12,6">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="{Binding ConflictText}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                            <Button Grid.Column="1" Classes="flat" Content="Close it" Command="{Binding CloseConflictsCommand}"
+                                    Foreground="{StaticResource WarnBrush}" FontWeight="SemiBold" />
+                        </Grid>
+                    </Border>
+                    <Border IsVisible="{Binding HasError}" Background="#33E25C4C" CornerRadius="6" Padding="12,6">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="{Binding ErrorText}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                            <Button Grid.Column="1" Classes="flat" Content="Dismiss" Command="{Binding DismissErrorCommand}" />
+                        </Grid>
+                    </Border>
+                    <Border IsVisible="{Binding IsConfirmingDelete}" Background="#33E25C4C" CornerRadius="6" Padding="12,6">
+                        <Grid ColumnDefinitions="*,Auto,Auto">
+                            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding DeleteConfirmText}" />
+                            <Button Grid.Column="1" Classes="flat" Content="Delete" FontWeight="SemiBold" Foreground="#FF8A7A"
+                                    Command="{Binding DeleteProfileCommand}" />
+                            <Button Grid.Column="2" Classes="flat" Content="Cancel" Command="{Binding CancelDeleteCommand}" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <!-- Controller with callouts -->
+                <Viewbox Grid.Row="1" Stretch="Uniform" Margin="0,4">
+                    <views:ControllerCanvas Width="1000" Height="560" />
+                </Viewbox>
+
+                <!-- Footer -->
+                <Grid Grid.Row="2" ColumnDefinitions="*,Auto,*" Height="64">
+                    <Button Classes="pill" HorizontalAlignment="Left" Command="{Binding ToggleMouseCommand}"
+                            ToolTip.Tip="Turn handle-to-mouse control on or off">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Border Width="30" Height="30" CornerRadius="15" Background="{StaticResource ChipBrush}"
+                                    BorderBrush="#5A5D60" BorderThickness="1">
+                                <Grid>
+                                    <Ellipse Width="10" Height="10" Fill="{StaticResource AccentBrush}" IsVisible="{Binding MouseEnabled}" />
+                                    <Ellipse Width="10" Height="10" Stroke="{StaticResource MutedBrush}" StrokeThickness="1.5"
+                                             IsVisible="{Binding !MouseEnabled}" />
+                                </Grid>
+                            </Border>
+                            <TextBlock Text="{Binding MouseStateText}" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="22" VerticalAlignment="Center">
+                        <Button Classes="chip" Width="34" Height="30" CornerRadius="5" Content="‹" FontSize="16"
+                                Command="{Binding PreviousProfileCommand}" ToolTip.Tip="Previous layout" />
+
+                        <Grid Width="300">
+                            <!-- Click the name to edit the layout's name and description -->
+                            <Button Classes="flat" IsVisible="{Binding !IsRenaming}" HorizontalAlignment="Center"
+                                    Command="{Binding StartRenameCommand}" ToolTip.Tip="Click to edit the name and description">
+                                <StackPanel Spacing="1">
+                                    <TextBlock Text="{Binding ProfileName}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" MaxWidth="290" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Classes="sub" Text="{Binding ProfileDescription}" HorizontalAlignment="Center" MaxWidth="290" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Classes="sub" Text="{Binding ProfilePosition}" FontSize="10.5"
+                                               Foreground="{StaticResource MutedBrush}" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                            <!-- Compact so it fits the fixed footer height; Tab switches fields, Enter saves, Esc cancels -->
+                            <StackPanel IsVisible="{Binding IsRenaming}" Spacing="3" VerticalAlignment="Center"
+                                        ToolTip.Tip="Tab switches fields · Enter saves · Esc cancels">
+                                <TextBox x:Name="RenameBox" Text="{Binding RenameText}" Width="280" MaxLength="40"
+                                         MinHeight="28" Padding="8,3" HorizontalContentAlignment="Center"
+                                         FontWeight="Bold" FontSize="14" />
+                                <TextBox x:Name="DescriptionBox" Text="{Binding RenameDescription}" Width="280" MaxLength="80"
+                                         MinHeight="24" Padding="8,2" HorizontalContentAlignment="Center" FontSize="12" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Button Classes="chip" Width="34" Height="30" CornerRadius="5" Content="›" FontSize="16"
+                                Command="{Binding NextProfileCommand}" ToolTip.Tip="Next layout" />
+
+                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="-6,0,0,0">
+                            <Button Classes="chip" Width="34" Height="30" CornerRadius="5" Content="+" FontSize="17"
+                                    Command="{Binding AddProfileCommand}" ToolTip.Tip="New layout (starts as a copy of this one)" />
+                            <!-- A plain fixed-size panel instead of a MenuFlyout: the menu re-measured on hover
+                                 and briefly jumped. Fixed width/rows can't resize or move. -->
+                            <Button x:Name="OptionsButton" Classes="chip" Width="34" Height="30" CornerRadius="5" Content="⋯" FontSize="15">
+                                <Button.Flyout>
+                                    <Flyout Placement="TopEdgeAlignedRight" FlyoutPresenterClasses="menu">
+                                        <StackPanel Width="250">
+                                            <Button Classes="menuItem" Content="Edit name and description"
+                                                    Command="{Binding StartRenameCommand}" Click="OnOptionsItemClick" />
+                                            <Button Classes="menuItem" Content="Duplicate"
+                                                    Command="{Binding DuplicateProfileCommand}" Click="OnOptionsItemClick" />
+                                            <Button Classes="menuItem" Content="Reset buttons to default"
+                                                    Command="{Binding ResetProfileCommand}" Click="OnOptionsItemClick" />
+                                            <Border Height="1" Background="#4A4C4E" Margin="8,4" />
+                                            <Button Classes="menuItem" Content="Delete layout…"
+                                                    Command="{Binding AskDeleteProfileCommand}" Click="OnOptionsItemClick" />
+                                        </StackPanel>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Button Grid.Column="2" Classes="pill" HorizontalAlignment="Right" Padding="14,4,6,4"
+                            Command="{Binding OpenMouseSettingsCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Settings" FontWeight="Bold" FontSize="15" VerticalAlignment="Center" />
+                            <Border Width="30" Height="30" CornerRadius="15" Background="{StaticResource ChipBrush}"
+                                    BorderBrush="#5A5D60" BorderThickness="1">
+                                <TextBlock Text="⚙" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Button editor sheet -->
+        <Border IsVisible="{Binding IsEditorOpen}" Width="360" Margin="0,76,23,23" HorizontalAlignment="Right"
+                Background="{StaticResource SheetBrush}" CornerRadius="6,0,6,6"
+                BorderBrush="{StaticResource PanelEdgeBrush}" BorderThickness="1,1,0,0"
+                BoxShadow="-12 0 28 0 #66000000">
+            <ScrollViewer>
+                <StackPanel Margin="22,20" Spacing="4" DataContext="{Binding Editor}" x:DataType="vm:ActionEditorViewModel">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Border Width="40" Height="40" CornerRadius="20" Background="{StaticResource ChipBrush}"
+                                BorderBrush="{StaticResource AccentBrush}" BorderThickness="2">
+                            <TextBlock Text="{Binding Chip}" FontWeight="Bold" FontSize="12"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="17" />
+                            <TextBlock Classes="sub" Text="{Binding Preview}" />
+                        </StackPanel>
+                        <Button Grid.Column="2" Classes="flat" Content="✕" VerticalAlignment="Top"
+                                Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).ClosePanelsCommand}" />
+                    </Grid>
+
+                    <TextBlock Classes="section" Text="INPUT" />
+                    <!-- Click, then press a key, click a mouse button or turn the wheel. -->
+                    <Border x:Name="InputCapture" Classes="capture" Focusable="True" Cursor="Hand"
+                            ToolTip.Tip="Click here, then press a key, click a mouse button or scroll">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="{Binding CaptureText}" TextWrapping="Wrap" />
+                            <TextBlock Classes="sub" FontSize="11" IsVisible="{Binding ShowCaptureHint}"
+                                       Text="Still listening. Press something else to change it, or click Done." />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Classes="section" Text="OR CHOOSE" />
+                    <ComboBox ItemsSource="{Binding KindNames}" SelectedIndex="{Binding KindIndex}" HorizontalAlignment="Stretch" />
+
+                    <StackPanel IsVisible="{Binding IsMouseButton}">
+                        <TextBlock Classes="section" Text="BUTTON" />
+                        <ComboBox ItemsSource="{Binding MouseButtonNames}" SelectedIndex="{Binding MouseButtonIndex}" HorizontalAlignment="Stretch" />
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding IsScroll}">
+                        <TextBlock Classes="section" Text="DIRECTION" />
+                        <ComboBox ItemsSource="{Binding ScrollNames}" SelectedIndex="{Binding ScrollIndex}" HorizontalAlignment="Stretch" />
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding IsKeys}" Spacing="6">
+                        <TextBlock Classes="section" Text="KEYS" />
+                        <WrapPanel>
+                            <CheckBox Content="Ctrl" IsChecked="{Binding Ctrl}" Margin="0,0,10,0" />
+                            <CheckBox Content="Shift" IsChecked="{Binding Shift}" Margin="0,0,10,0" />
+                            <CheckBox Content="Alt" IsChecked="{Binding Alt}" Margin="0,0,10,0" />
+                            <CheckBox Content="{Binding MetaName}" IsChecked="{Binding Win}" />
+                        </WrapPanel>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Classes="sub" VerticalAlignment="Center"
+                                       Text="{Binding MainKeyText, StringFormat=Key: {0}}" />
+                            <Button Grid.Column="1" Classes="flat" Content="Clear" Command="{Binding ClearKeysCommand}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <TextBlock Classes="sub" Text="{Binding Hint}" TextWrapping="Wrap" Margin="0,8,0,0" />
+
+                    <TextBlock Classes="section" Text="LABEL (OPTIONAL)" />
+                    <TextBox Text="{Binding Label}" />
+                    <TextBlock Classes="sub" FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap"
+                               Text="Shown next to the button instead of the action name, like &quot;Jump&quot;." />
+
+                    <Button Classes="accent" Content="Done" HorizontalAlignment="Right" Margin="0,18,0,0"
+                            Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).ClosePanelsCommand}" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Mouse + app settings sheet -->
+        <Border IsVisible="{Binding IsMouseSettingsOpen}" Width="380" Margin="0,76,23,23" HorizontalAlignment="Right"
+                Background="{StaticResource SheetBrush}" CornerRadius="6,0,6,6"
+                BorderBrush="{StaticResource PanelEdgeBrush}" BorderThickness="1,1,0,0"
+                BoxShadow="-12 0 28 0 #66000000">
+            <ScrollViewer>
+                <StackPanel Margin="22,20" Spacing="2">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Settings" FontWeight="Bold" FontSize="17" />
+                        <Button Grid.Column="1" Classes="flat" Content="✕" Command="{Binding ClosePanelsCommand}" />
+                    </Grid>
+
+                    <views:HandlePad Width="150" Height="150" Margin="0,12,0,4" HorizontalAlignment="Center"
+                                     X="{Binding HandleX}" Y="{Binding HandleY}" AimZone="{Binding AimZone}"
+                                     ShowZone="{Binding IsHybrid}" Active="{Binding MouseEnabled}" />
+                    <TextBlock Classes="sub" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
+                               Text="Inside the dashed box the cursor follows the handle. Push past it to keep the cursor moving." />
+
+                    <TextBlock Classes="section" Text="MOUSE MODE" />
+                    <RadioButton GroupName="mode" IsChecked="{Binding IsHybrid}" Content="Dual Strike: aim + spin zones" />
+                    <RadioButton GroupName="mode" IsChecked="{Binding !IsHybrid, Mode=OneWay}" Content="Joystick: tilt sets speed" />
+
+                    <TextBlock Classes="section" Text="AXES" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Invert horizontal (left / right)" VerticalAlignment="Center" />
+                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding InvertX}" OnContent="" OffContent="" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Invert vertical (up / down)" VerticalAlignment="Center" />
+                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding InvertY}" OnContent="" OffContent="" />
+                    </Grid>
+
+                    <StackPanel IsVisible="{Binding IsHybrid}">
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,10,0,0">
+                            <TextBlock Text="Aim sensitivity" />
+                            <TextBlock Grid.Column="1" Classes="sub" Text="{Binding AimSensitivity, StringFormat={}{0:0}}" />
+                        </Grid>
+                        <Slider Minimum="100" Maximum="2500" Value="{Binding AimSensitivity}" />
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="Aim zone size" />
+                            <TextBlock Grid.Column="1" Classes="sub" Text="{Binding AimZone, StringFormat={}{0:P0}}" />
+                        </Grid>
+                        <Slider Minimum="0.3" Maximum="0.98" Value="{Binding AimZone}" />
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="Momentum when lifting" />
+                            <TextBlock Grid.Column="1" Classes="sub" Text="{Binding Momentum, StringFormat={}{0:P0}}" />
+                        </Grid>
+                        <Slider Minimum="0" Maximum="1" Value="{Binding Momentum}" />
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding !IsHybrid}">
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,10,0,0">
+                            <TextBlock Text="Deadzone" />
+                            <TextBlock Grid.Column="1" Classes="sub" Text="{Binding Deadzone, StringFormat={}{0:P0}}" />
+                        </Grid>
+                        <Slider Minimum="0" Maximum="0.5" Value="{Binding Deadzone}" />
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="Response curve" />
+                            <TextBlock Grid.Column="1" Classes="sub" Text="{Binding Curve, StringFormat={}{0:0.0}}" />
+                        </Grid>
+                        <Slider Minimum="1" Maximum="3" Value="{Binding Curve}" />
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Top speed (px/s)" />
+                        <TextBlock Grid.Column="1" Classes="sub" Text="{Binding SpinSpeed, StringFormat={}{0:0}}" />
+                    </Grid>
+                    <Slider Minimum="200" Maximum="5000" Value="{Binding SpinSpeed}" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Smoothing" />
+                        <TextBlock Grid.Column="1" Classes="sub" Text="{Binding Smoothing, StringFormat={}{0:P0}}" />
+                    </Grid>
+                    <Slider Minimum="0" Maximum="0.9" Value="{Binding Smoothing}" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Precision aim speed" />
+                        <TextBlock Grid.Column="1" Classes="sub" Text="{Binding PrecisionFactor, StringFormat={}{0:P0}}" />
+                    </Grid>
+                    <Slider Minimum="0.1" Maximum="1" Value="{Binding PrecisionFactor}" />
+                    <TextBlock Classes="sub" FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,6,0,0"
+                               Text="Mouse settings belong to the current layout." />
+
+                    <TextBlock Classes="section" Text="APP" />
+                    <CheckBox Content="Start hidden in the tray" IsChecked="{Binding StartMinimized}" />
+                    <CheckBox Content="Close button hides to the tray" IsChecked="{Binding CloseToTray}" />
+                    <TextBlock Classes="sub" FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,10,0,0"
+                               Text="{Binding SettingsPath, StringFormat=Settings are saved to {0}}" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>

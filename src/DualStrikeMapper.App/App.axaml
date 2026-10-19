@@ -1,0 +1,206 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="DualStrikeMapper.App.App"
+             xmlns:local="using:DualStrikeMapper.App"
+             Name="SideWinder Dual Strike Input Mapper"
+             RequestedThemeVariant="Dark">
+
+    <Application.DataTemplates>
+        <local:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <Color x:Key="AccentColor">#46D79A</Color>
+        <SolidColorBrush x:Key="WindowBrush" Color="#1E1F20" />
+        <SolidColorBrush x:Key="PanelBrush" Color="#343536" />
+        <SolidColorBrush x:Key="PanelEdgeBrush" Color="#3F4142" />
+        <SolidColorBrush x:Key="SheetBrush" Color="#2A2B2C" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#46D79A" />
+        <SolidColorBrush x:Key="AccentDimBrush" Color="#1F5A42" />
+        <SolidColorBrush x:Key="TextBrush" Color="#F2F2F2" />
+        <SolidColorBrush x:Key="SubTextBrush" Color="#B4B8BB" />
+        <SolidColorBrush x:Key="MutedBrush" Color="#7C8083" />
+        <SolidColorBrush x:Key="WarnBrush" Color="#E2B44C" />
+        <LinearGradientBrush x:Key="ChipBrush" StartPoint="50%,0%" EndPoint="50%,100%">
+            <GradientStop Color="#4A4C4E" Offset="0" />
+            <GradientStop Color="#1C1D1E" Offset="1" />
+        </LinearGradientBrush>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme>
+            <FluentTheme.Palettes>
+                <ColorPaletteResources x:Key="Dark" Accent="#46D79A" RegionColor="#2A2B2C" />
+            </FluentTheme.Palettes>
+        </FluentTheme>
+
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        </Style>
+
+        <!-- Tooltips open above the button, never under the cursor. At the bottom of the window a
+             cursor-placed tooltip gets pushed over the pointer, steals the hover, closes, reopens: flicker. -->
+        <Style Selector="Button">
+            <Setter Property="ToolTip.Placement" Value="Top" />
+            <Setter Property="ToolTip.VerticalOffset" Value="-6" />
+            <Setter Property="ToolTip.ShowDelay" Value="500" />
+        </Style>
+        <Style Selector="TextBlock.title">
+            <Setter Property="FontSize" Value="21" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style Selector="TextBlock.sub">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{StaticResource SubTextBrush}" />
+        </Style>
+        <Style Selector="TextBlock.section">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="Margin" Value="0,14,0,4" />
+        </Style>
+        <Style Selector="TextBlock.calloutAction">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="TextBlock.calloutControl">
+            <Setter Property="FontSize" Value="10.5" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <!-- Round button chips like the mockup -->
+        <Style Selector="Button.chip">
+            <Setter Property="CornerRadius" Value="20" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource ChipBrush}" />
+            <Setter Property="BorderBrush" Value="#5A5D60" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="Button.chip.square">
+            <Setter Property="CornerRadius" Value="8" />
+        </Style>
+        <Style Selector="Button.chip:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource ChipBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button.chip.selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+        <Style Selector="Button.chip.live /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+            <Setter Property="Foreground" Value="#10291E" />
+        </Style>
+
+        <!-- Clickable callout text -->
+        <Style Selector="Button.calloutLabel, Button.padButton, Button.flat">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="4,2" />
+        </Style>
+        <Style Selector="Button.calloutLabel:pointerover /template/ ContentPresenter#PART_ContentPresenter, Button.padButton:pointerover /template/ ContentPresenter#PART_ContentPresenter, Button.flat:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#14FFFFFF" />
+        </Style>
+        <Style Selector="Button.calloutLabel:pressed, Button.padButton:pressed, Button.flat:pressed">
+            <Setter Property="RenderTransform" Value="none" />
+        </Style>
+
+        <!-- Footer pills (Mouse ON, settings) -->
+        <Style Selector="Button.pill">
+            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="Padding" Value="6,4,14,4" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style Selector="Button.pill:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#14FFFFFF" />
+        </Style>
+
+        <Style Selector="Button.accent">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+            <Setter Property="Foreground" Value="#10291E" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="16,7" />
+        </Style>
+        <Style Selector="Button.accent:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#5BE5AA" />
+            <Setter Property="Foreground" Value="#10291E" />
+        </Style>
+
+        <!-- Input capture box in the button editor -->
+        <Style Selector="Border.capture">
+            <Setter Property="Background" Value="#1C1D1E" />
+            <Setter Property="BorderBrush" Value="#55595C" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="MinHeight" Value="44" />
+        </Style>
+        <Style Selector="Border.capture:pointerover">
+            <Setter Property="BorderBrush" Value="#8A8E91" />
+        </Style>
+        <Style Selector="Border.capture:focus">
+            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+
+        <!-- Layout options menu (⋯): fixed-size rows so it never re-measures or moves on hover -->
+        <Style Selector="FlyoutPresenter.menu">
+            <Setter Property="Padding" Value="4" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Background" Value="#2B2C2D" />
+            <Setter Property="BorderBrush" Value="#4A4C4E" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+        <Style Selector="Button.menuItem">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style Selector="Button.menuItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#1AFFFFFF" />
+        </Style>
+        <Style Selector="Button.menuItem:pressed">
+            <Setter Property="RenderTransform" Value="none" />
+        </Style>
+        <Style Selector="Button.menuItem:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+        </Style>
+
+        <Style Selector="Slider">
+            <Setter Property="Margin" Value="0,-6,0,-2" />
+        </Style>
+    </Application.Styles>
+
+    <TrayIcon.Icons>
+        <TrayIcons>
+            <TrayIcon Icon="/Assets/app.ico" ToolTipText="SideWinder Dual Strike Input Mapper" Clicked="OnTrayClicked">
+                <TrayIcon.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Header="Show" Click="OnTrayShow" />
+                        <NativeMenuItem Header="Mouse on/off" Click="OnTrayToggleMouse" />
+                        <NativeMenuItemSeparator />
+                        <NativeMenuItem Header="Quit" Click="OnTrayQuit" />
+                    </NativeMenu>
+                </TrayIcon.Menu>
+            </TrayIcon>
+        </TrayIcons>
+    </TrayIcon.Icons>
+</Application>
