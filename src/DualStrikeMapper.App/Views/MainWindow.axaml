@@ -48,6 +48,14 @@
                             <Button Grid.Column="1" Classes="flat" Content="Dismiss" Command="{Binding DismissErrorCommand}" />
                         </Grid>
                     </Border>
+                    <Border IsVisible="{Binding HasUpdate}" Background="#334CA3E2" CornerRadius="6" Padding="12,6">
+                        <Grid ColumnDefinitions="*,Auto,Auto">
+                            <TextBlock Text="{Binding UpdateText}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                            <Button Grid.Column="1" Classes="flat" Content="Download" Command="{Binding DownloadUpdateCommand}"
+                                    FontWeight="SemiBold" ToolTip.Tip="Opens the release page on GitHub" />
+                            <Button Grid.Column="2" Classes="flat" Content="Skip this version" Command="{Binding SkipUpdateCommand}" />
+                        </Grid>
+                    </Border>
                 </StackPanel>
 
                 <!-- Controller with callouts -->
@@ -316,6 +324,16 @@
                     <TextBlock Classes="section" Text="APP" />
                     <CheckBox Content="Start hidden in the tray" IsChecked="{Binding StartMinimized}" />
                     <CheckBox Content="Close button hides to the tray" IsChecked="{Binding CloseToTray}" />
+                    <CheckBox Content="Check for updates at startup" IsChecked="{Binding CheckForUpdates}" />
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,0">
+                        <StackPanel VerticalAlignment="Center" Spacing="1">
+                            <TextBlock Text="{Binding VersionText}" />
+                            <TextBlock Classes="sub" FontSize="11" Text="{Binding UpdateStatus}" TextWrapping="Wrap"
+                                       IsVisible="{Binding UpdateStatus, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                        </StackPanel>
+                        <Button Grid.Column="1" Classes="flat" Content="Check now" Command="{Binding CheckUpdatesNowCommand}"
+                                IsEnabled="{Binding !IsCheckingUpdates}" />
+                    </Grid>
                     <TextBlock Classes="sub" FontSize="11" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,10,0,0"
                                Text="{Binding SettingsPath, StringFormat=Settings are saved to {0}}" />
                 </StackPanel>

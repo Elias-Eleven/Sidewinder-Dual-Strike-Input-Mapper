@@ -17,6 +17,10 @@ public sealed class AppSettings
     public bool MouseEnabled { get; set; } = true;
     public bool StartMinimized { get; set; }
     public bool CloseToTray { get; set; } = true;
+    public bool CheckForUpdates { get; set; } = true;
+
+    /// <summary>A release tag the user said to skip, so its banner doesn't come back every launch.</summary>
+    public string? SkippedUpdate { get; set; }
 
     [JsonIgnore]
     public Profile Active

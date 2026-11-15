@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,6 +10,7 @@ using DualStrikeMapper.Core;
 using DualStrikeMapper.Core.Controller;
 using DualStrikeMapper.Core.Mapping;
 using DualStrikeMapper.Core.Settings;
+using DualStrikeMapper.Core.Updates;
 
 namespace DualStrikeMapper.App.ViewModels;
 
@@ -54,6 +56,9 @@ public partial class MainViewModel : ViewModelBase
             _engine.Error += message => Dispatcher.UIThread.Post(() => ErrorText = message);
             _conflictTimer.Start();
             CheckConflicts();
+
+            if (settings.CheckForUpdates)
+                _ = CheckForUpdatesAsync(manual: false);
         }
     }
 
@@ -319,6 +324,90 @@ public partial class MainViewModel : ViewModelBase
 
     [RelayCommand]
     private void DismissError() => ErrorText = null;
+
+    // ---- Updates ----
+
+    private UpdateInfo? _update;
+
+    [ObservableProperty] public partial string? UpdateText { get; set; }
+    [ObservableProperty] public partial string? UpdateStatus { get; set; }
+    [ObservableProperty] public partial bool IsCheckingUpdates { get; set; }
+
+    public bool HasUpdate => UpdateText is not null;
+    public string VersionText => $"Version {UpdateChecker.CurrentVersion}";
+
+    partial void OnUpdateTextChanged(string? value) => OnPropertyChanged(nameof(HasUpdate));
+
+    public bool CheckForUpdates
+    {
+        get => _settings.CheckForUpdates;
+        set { _settings.CheckForUpdates = value; OnPropertyChanged(); QueueSave(); }
+    }
+
+    /// <summary>
+    /// The startup check stays quiet unless there's something new. A manual check from Settings
+    /// always says what happened, and shows a release even if it was skipped before.
+    /// </summary>
+    private async Task CheckForUpdatesAsync(bool manual)
+    {
+        if (IsCheckingUpdates)
+            return;
+        IsCheckingUpdates = true;
+        if (manual)
+            UpdateStatus = "Checking…";
+        try
+        {
+            var update = await UpdateChecker.CheckAsync();
+            if (update is null)
+            {
+                if (manual)
+                    UpdateStatus = "You have the newest version.";
+                return;
+            }
+            if (!manual && update.Tag == _settings.SkippedUpdate)
+                return;
+
+            _update = update;
+            UpdateText = $"Version {update.Version} is out. You have {UpdateChecker.CurrentVersion}.";
+            if (manual)
+                UpdateStatus = $"Version {update.Version} is available.";
+        }
+        catch (Exception)
+        {
+            // No internet or GitHub is down. Not worth bothering anyone about at startup.
+            if (manual)
+                UpdateStatus = "Couldn't reach GitHub. Try again later.";
+        }
+        finally
+        {
+            IsCheckingUpdates = false;
+        }
+    }
+
+    [RelayCommand]
+    private Task CheckUpdatesNow() => CheckForUpdatesAsync(manual: true);
+
+    [RelayCommand]
+    private void DownloadUpdate()
+    {
+        try
+        {
+            UpdateChecker.OpenInBrowser(_update?.PageUrl ?? UpdateChecker.ReleasesPage);
+        }
+        catch (Exception e)
+        {
+            ErrorText = $"Couldn't open the browser: {e.Message}";
+        }
+        UpdateText = null;
+    }
+
+    [RelayCommand]
+    private void SkipUpdate()
+    {
+        _settings.SkippedUpdate = _update?.Tag;
+        QueueSave();
+        UpdateText = null;
+    }
 
     public void SaveNow()
     {
