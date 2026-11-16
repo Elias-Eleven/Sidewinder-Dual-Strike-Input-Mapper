@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>DualStrikeMapper</string>
+    <string>Sidewinder Dual Strike Input Mapper</string>
     <key>CFBundleDisplayName</key>
-    <string>SideWinder Dual Strike Input Mapper</string>
+    <string>Sidewinder Dual Strike Input Mapper</string>
     <key>CFBundleIdentifier</key>
     <string>io.github.dualstrikemapper</string>
     <key>CFBundleExecutable</key>
-    <string>DualStrikeMapper</string>
+    <string>Sidewinder Dual Strike Input Mapper</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundlePackageType</key>

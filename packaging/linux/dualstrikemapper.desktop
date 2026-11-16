@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
-Name=SideWinder Dual Strike Input Mapper
+Name=Sidewinder Dual Strike Input Mapper
 Comment=Use a SideWinder Dual Strike as a mouse and map its buttons
-Exec=DualStrikeMapper
+Exec=sidewinder-dual-strike-input-mapper
 Icon=dualstrikemapper
 Terminal=false
 Categories=Utility;Game;

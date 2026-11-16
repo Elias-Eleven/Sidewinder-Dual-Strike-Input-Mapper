@@ -9,9 +9,10 @@
     <!-- Name shown in the exe's file properties and in Task Manager. -->
     <Product>Sidewinder Dual Strike Input Mapper</Product>
     <AssemblyTitle>Sidewinder Dual Strike Input Mapper</AssemblyTitle>
-    <!-- File name of the published Windows exe. AssemblyName stays DualStrikeMapper because the
-         avares://DualStrikeMapper/... asset URIs depend on it; a single-file exe can be renamed safely. -->
-    <WindowsExeName>Sidewinder Dual Strike Input Mapper</WindowsExeName>
+    <!-- File name of the published program on every platform. AssemblyName stays DualStrikeMapper
+         because the avares://DualStrikeMapper/... asset URIs depend on it; a single-file program can be
+         renamed safely. -->
+    <PublishedAppName>Sidewinder Dual Strike Input Mapper</PublishedAppName>
   </PropertyGroup>
 
   <!-- `dotnet publish -r <rid>` makes one standalone file that runs without .NET installed. -->
@@ -31,12 +32,12 @@
     </ItemGroup>
   </Target>
 
-  <!-- Give the published single-file Windows exe its full name. -->
-  <Target Name="RenameWindowsExe" AfterTargets="Publish"
-          Condition="'$(PublishSingleFile)' == 'true' And $(RuntimeIdentifier.StartsWith('win'))">
+  <!-- Give the published single-file program its full name (Windows, Linux and macOS). -->
+  <Target Name="RenamePublishedApp" AfterTargets="Publish" Condition="'$(PublishSingleFile)' == 'true'">
     <PropertyGroup>
-      <_PublishedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(AssemblyName).exe'))</_PublishedExe>
-      <_RenamedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(WindowsExeName).exe'))</_RenamedExe>
+      <_ExeExt Condition="$(RuntimeIdentifier.StartsWith('win'))">.exe</_ExeExt>
+      <_PublishedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(AssemblyName)$(_ExeExt)'))</_PublishedExe>
+      <_RenamedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(PublishedAppName)$(_ExeExt)'))</_RenamedExe>
     </PropertyGroup>
     <Delete Files="$(_RenamedExe)" />
     <Move SourceFiles="$(_PublishedExe)" DestinationFiles="$(_RenamedExe)" />

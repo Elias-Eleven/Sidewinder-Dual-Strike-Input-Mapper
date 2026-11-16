@@ -1,4 +1,4 @@
-# SideWinder Dual Strike Input Mapper
+# Sidewinder Dual Strike Input Mapper
 
 Modern compatibility software and mapper for the Microsoft Sidewinder Dual Strike Gamepad
 
@@ -35,7 +35,7 @@ dotnet publish src/DualStrikeMapper.App -c Release -r linux-x64 -o publish/linux
 dotnet publish src/DualStrikeMapper.App -c Release -r osx-arm64 -o publish/osx-arm64
 ```
 
-Use `osx-x64` for Intel Macs. The result is `publish/<platform>/DualStrikeMapper(.exe)`.
+Use `osx-x64` for Intel Macs. The result is `publish/<platform>/Sidewinder Dual Strike Input Mapper(.exe)`.
 `settings.json` is saved next to it, so the folder can live anywhere (keep it somewhere you can write to).
 
 ### Make the release downloads
@@ -46,8 +46,9 @@ Builds all three and packages them for a GitHub release into `publish/release` (
 pwsh tools/make-release.ps1 -Version 1.0.0
 ```
 
-You get `DualStrikeMapper-windows-x64.zip`, `…-linux-x64.tar.gz` (program + `install.sh`)
-and `…-macos-arm64.zip` (`DualStrikeMapper.app`). Each unpacks into a `DualStrikeMapper` folder;
+You get `Sidewinder-Dual-Strike-Input-Mapper-windows-x64.zip`, `…-linux-x64.tar.gz` (program + `install.sh`)
+and `…-macos-arm64.zip` (`Sidewinder Dual Strike Input Mapper.app`). Each unpacks into a
+`Sidewinder Dual Strike Input Mapper` folder;
 on Windows and Linux `settings.json` is saved in that folder, on macOS in
 `~/Library/Application Support/DualStrikeMapper`. Attach the three files to the release.
 
@@ -56,14 +57,15 @@ on Windows and Linux `settings.json` is saved in that folder, on macOS in
 The Windows `.exe` already carries the icon. On the other two, one extra step adds the icon and launcher:
 
 ```bash
-sh packaging/linux/install.sh publish/linux-x64/DualStrikeMapper
+sh packaging/linux/install.sh "publish/linux-x64/Sidewinder Dual Strike Input Mapper"
 ```
 
 ```bash
-sh packaging/macos/make-app.sh publish/osx-arm64/DualStrikeMapper
+sh packaging/macos/make-app.sh "publish/osx-arm64/Sidewinder Dual Strike Input Mapper"
 ```
 
-Linux installs to `~/.local/opt/DualStrikeMapper` with a menu entry. macOS makes `DualStrikeMapper.app`
+Linux installs to `~/.local/opt/DualStrikeMapper` with a menu entry and a `sidewinder-dual-strike-input-mapper`
+terminal command. macOS makes `Sidewinder Dual Strike Input Mapper.app`
 next to the binary; it isn't signed, so open it the first time with right-click → Open.
 
 ### Editors

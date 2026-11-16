@@ -1,18 +1,19 @@
 #!/bin/sh
-# Wraps the published macOS binary in DualStrikeMapper.app with its icon.
+# Wraps the published macOS binary in "Sidewinder Dual Strike Input Mapper.app" with its icon.
 # Usage (after `dotnet publish ... -r osx-arm64 -o publish/osx-arm64`):
-#   sh packaging/macos/make-app.sh publish/osx-arm64/DualStrikeMapper
+#   sh packaging/macos/make-app.sh "publish/osx-arm64/Sidewinder Dual Strike Input Mapper"
 set -e
 
+name="Sidewinder Dual Strike Input Mapper"
 here=$(cd "$(dirname "$0")" && pwd)
-binary=${1:-"$here/../../publish/osx-arm64/DualStrikeMapper"}
+binary=${1:-"$here/../../publish/osx-arm64/$name"}
 [ -f "$binary" ] || { echo "Build it first: dotnet publish src/DualStrikeMapper.App -c Release -r osx-arm64 -o publish/osx-arm64"; exit 1; }
 
-out="$(dirname "$binary")/DualStrikeMapper.app"
+out="$(dirname "$binary")/$name.app"
 rm -rf "$out"
 mkdir -p "$out/Contents/MacOS" "$out/Contents/Resources"
-cp "$binary" "$out/Contents/MacOS/DualStrikeMapper"
-chmod +x "$out/Contents/MacOS/DualStrikeMapper"
+cp "$binary" "$out/Contents/MacOS/$name"
+chmod +x "$out/Contents/MacOS/$name"
 cp "$here/Info.plist" "$out/Contents/Info.plist"
 cp "$here/AppIcon.icns" "$out/Contents/Resources/AppIcon.icns"
 
