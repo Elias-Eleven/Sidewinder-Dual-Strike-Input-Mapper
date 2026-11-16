@@ -1,6 +1,6 @@
 # Builds the three downloads for a GitHub release into publish/release. Each one unpacks into a
 # DualStrikeMapper folder:
-#   DualStrikeMapper-windows-x64.zip    DualStrikeMapper.exe (settings.json is saved next to it)
+#   DualStrikeMapper-windows-x64.zip    Sidewinder Dual Strike Input Mapper.exe (settings.json is saved next to it)
 #   DualStrikeMapper-linux-x64.tar.gz   program + install.sh (adds icon and app-menu entry)
 #   DualStrikeMapper-macos-arm64.zip    DualStrikeMapper.app (Apple Silicon)
 # Needs PowerShell 7 (pwsh) for the tar/zip permission handling:
@@ -41,7 +41,7 @@ function New-Zip([string]$path, [array]$entries) {
 # ---- Windows ----
 
 New-Zip (Join-Path $out "DualStrikeMapper-windows-x64.zip") @(
-    @{ Name = 'DualStrikeMapper/DualStrikeMapper.exe'; Bytes = [IO.File]::ReadAllBytes((Join-Path $root 'publish/win-x64/DualStrikeMapper.exe')); Mode = $exec }
+    @{ Name = 'DualStrikeMapper/Sidewinder Dual Strike Input Mapper.exe'; Bytes = [IO.File]::ReadAllBytes((Join-Path $root 'publish/win-x64/Sidewinder Dual Strike Input Mapper.exe')); Mode = $exec }
 )
 
 # ---- Linux: tar.gz with Unix permissions kept, so the program and installer can run right away ----

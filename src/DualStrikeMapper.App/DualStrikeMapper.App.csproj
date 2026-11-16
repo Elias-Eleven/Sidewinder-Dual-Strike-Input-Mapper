@@ -6,6 +6,12 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>DualStrikeMapper</AssemblyName>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <!-- Name shown in the exe's file properties and in Task Manager. -->
+    <Product>Sidewinder Dual Strike Input Mapper</Product>
+    <AssemblyTitle>Sidewinder Dual Strike Input Mapper</AssemblyTitle>
+    <!-- File name of the published Windows exe. AssemblyName stays DualStrikeMapper because the
+         avares://DualStrikeMapper/... asset URIs depend on it; a single-file exe can be renamed safely. -->
+    <WindowsExeName>Sidewinder Dual Strike Input Mapper</WindowsExeName>
   </PropertyGroup>
 
   <!-- `dotnet publish -r <rid>` makes one standalone file that runs without .NET installed. -->
@@ -23,6 +29,17 @@
     <ItemGroup>
       <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="'%(Extension)' == '.pdb'" />
     </ItemGroup>
+  </Target>
+
+  <!-- Give the published single-file Windows exe its full name. -->
+  <Target Name="RenameWindowsExe" AfterTargets="Publish"
+          Condition="'$(PublishSingleFile)' == 'true' And $(RuntimeIdentifier.StartsWith('win'))">
+    <PropertyGroup>
+      <_PublishedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(AssemblyName).exe'))</_PublishedExe>
+      <_RenamedExe>$([System.IO.Path]::Combine('$(PublishDir)', '$(WindowsExeName).exe'))</_RenamedExe>
+    </PropertyGroup>
+    <Delete Files="$(_RenamedExe)" />
+    <Move SourceFiles="$(_PublishedExe)" DestinationFiles="$(_RenamedExe)" />
   </Target>
 
   <ItemGroup>
